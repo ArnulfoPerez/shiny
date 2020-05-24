@@ -22,6 +22,39 @@ files <- unzip(temp, list = TRUE)
 df <- read_csv(unz(temp, arrange(files, Length)[1,]$Name))
 unlink(temp)
 date_cap <- as.Date(df$FECHA_ACTUALIZACION[1])
+#ENTIDAD_FEDERATIVA
+entidades <- c("Aguascalientes",
+               "Baja California",
+               "Baja California Sur",
+               "Campeche",
+               "Coahuila",
+               "Colima",
+               "Chiapas",
+               "Chihuahua",
+               "Ciudad de México",
+               "Durango",
+               "Guanajuato",
+               "Guerrero",
+               "Hidalgo",
+               "Jalisco",
+               "México",
+               "Michoacán",
+               "Morelos",
+               "Nayarit",
+               "Nuevo León",
+               "Oaxaca",
+               "Puebla",
+               "Querétaro",
+               "Quintana Roo",
+               "San Luis Potosí",
+               "Sinaloa",
+               "Sonora",
+               "Tabasco",
+               "Tamaulipas",
+               "Tlaxcala",
+               "Veracruz",
+               "Yucatán",
+               "Zacatecas")
 
 pos <- filter(df, RESULTADO == 1)
 
@@ -83,7 +116,9 @@ ui <- dashboardPage(
             menuItem("México Pop.", tabName = "MéxicoPop", icon = icon("th")),
             menuItem("México Covid", tabName = "MéxicoCovid", icon = icon("th")),
             menuItem("Center Covid", tabName = "CenterCovid", icon = icon("th")),
-            menuItem("Nuevo León Covid", tabName = "NLCovid", icon = icon("th"))
+            menuItem("Nuevo León Covid", tabName = "NLCovid", icon = icon("th")),
+            selectInput("entity", "Entity",entidades),
+            menuItem("Covid by federal entity", tabName = "EntityCovid", icon = icon("th"))
         )
     ),
     ## Body content
@@ -162,6 +197,13 @@ ui <- dashboardPage(
             tabItem(tabName = "NLCovid",
                     fluidPage(
                         plotOutput("nlCovid")
+                    )
+            ),
+            
+            # seventh tab content
+            tabItem(tabName = "EntityCovid",
+                    fluidPage(
+                        plotOutput("entityCovid")
                     )
             )
         )
@@ -282,6 +324,20 @@ server <- function(input, output) {
                                title = paste("COVID Nuevo León",date_cap),
                                legend = "tasa por\n100 mil\nhabitantes",
                                zoom = subset(df_mxmunicipio, state_name %in% c("Nuevo León"))$region) +
+            scale_fill_viridis("tasa por\n100 mil\nhabitantes",
+                               trans = scales::pseudo_log_trans(sigma = 0.001)) +
+            theme(legend.key.size = unit(2, "cm")) +
+            theme(plot.title = element_text(size=30))
+        #ggsave("graphs/map_centro_covid.png", dpi = 100, width = 16, height = 11)
+        
+    })
+    
+    output$entityCovid <- renderPlot({
+        mxmunicipio_choropleth(muns, 
+                               num_colors = 1,
+                               title = paste("COVID",input$entity,date_cap),
+                               legend = "tasa por\n100 mil\nhabitantes",
+                               zoom = subset(df_mxmunicipio, state_name ==input$entity)$region) +
             scale_fill_viridis("tasa por\n100 mil\nhabitantes",
                                trans = scales::pseudo_log_trans(sigma = 0.001)) +
             theme(legend.key.size = unit(2, "cm")) +
