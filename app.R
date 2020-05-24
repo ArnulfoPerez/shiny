@@ -21,6 +21,7 @@ download.file("http://187.191.75.115/gobmx/salud/datos_abiertos/datos_abiertos_c
 files <- unzip(temp, list = TRUE)
 df <- read_csv(unz(temp, arrange(files, Length)[1,]$Name))
 unlink(temp)
+date_cap <- as.Date(df$FECHA_ACTUALIZACION[1])
 
 pos <- filter(df, RESULTADO == 1)
 
@@ -42,14 +43,12 @@ cities <- filter(muns, name %in% c("Coahuila Monclova",
                                    "Baja California Mexicali",
                                    "Yucatán Mérida",
                                    "Puebla Puebla",
-                                   "Sonora Sáric",
-                                   "Guerrero Acapulco de Juárez",
+                                   "Nuevo León Monterrey",
                                    "Chihuahua Juárez",
-                                   "Coahuila Piedras Negras",
                                    "Michoacán Lázaro Cárdenas",
                                    "Oaxaca Santa María Huatulco",
                                    "Colima Manzanillo",
-                                   "Jalisco Puerto Vallarta"))
+                                   "Jalisco Guadalajara"))
 cities$municipio_name <- str_replace(cities$municipio_name, 
                                      "Cuajimalpa de Morelos", 
                                      "Cuajimalpa")
@@ -62,9 +61,6 @@ cities$municipio_name <- str_replace(cities$municipio_name,
 cities$municipio_name <- str_replace(cities$municipio_name, 
                                      "Juárez", 
                                      "Ciudad Juárez")
-cities$municipio_name <- str_replace(cities$municipio_name, 
-                                     "Acapulco de Juárez", 
-                                     "Acapulco")
 cities$municipio_name <- str_replace(cities$municipio_name, 
                                      "Centro", 
                                      "Villahermosa")
@@ -231,7 +227,7 @@ server <- function(input, output) {
     output$mexicoCovid <- renderPlot({
         mxmunicipio_choropleth(muns, 
                                num_colors = 1,
-                               title = "Mapa de casos COVID-19 confirmados, por municipio de residencia (14 de abril del 2020)",
+                               title = paste("COVID-19 per county",date_cap),
                                legend = "tasa por\n100 mil\nhabitantes") +
             scale_fill_viridis("tasa por\n100 mil\nhabitantes",
                                trans = scales::pseudo_log_trans(sigma = 0.001)) + 
