@@ -81,7 +81,9 @@ ui <- dashboardPage(
             menuItem("Widgets", tabName = "widgets", icon = icon("th")),
             menuItem("leaflet", tabName = "leaflet", icon = icon("th")),
             menuItem("México Pop.", tabName = "MéxicoPop", icon = icon("th")),
-            menuItem("México Covid", tabName = "MéxicoCovid", icon = icon("th"))
+            menuItem("México Covid", tabName = "MéxicoCovid", icon = icon("th")),
+            menuItem("Center Covid", tabName = "CenterCovid", icon = icon("th")),
+            menuItem("Nuevo León Covid", tabName = "NLCovid", icon = icon("th"))
         )
     ),
     ## Body content
@@ -146,6 +148,20 @@ ui <- dashboardPage(
             tabItem(tabName = "MéxicoCovid",
                     fluidPage(
                         plotOutput("mexicoCovid")
+                    )
+            ),
+            
+            # fith tab content
+            tabItem(tabName = "CenterCovid",
+                    fluidPage(
+                        plotOutput("centerCovid")
+                    )
+            ),
+            
+            # sixth tab content
+            tabItem(tabName = "NLCovid",
+                    fluidPage(
+                        plotOutput("nlCovid")
                     )
             )
         )
@@ -238,6 +254,39 @@ server <- function(input, output) {
             theme(legend.key.size = unit(2, "cm")) +
             theme(plot.title = element_text(size=32))
         #ggsave("graphs/map_covid.png", dpi = 100, width = 19, height = 14)
+        
+    })
+    
+    output$centerCovid <- renderPlot({
+        mxmunicipio_choropleth(muns, 
+                               num_colors = 1,
+                               title = paste("COVID-19 central México",date_cap),
+                               legend = "tasa por\n100 mil\nhabitantes",
+                               zoom = subset(df_mxmunicipio, state_name %in% c("Ciudad de México",
+                                                                               "Puebla",
+                                                                               "Morelos",
+                                                                               "México",
+                                                                               "Hidalgo",
+                                                                               "Tlaxcala"))$region) +
+            scale_fill_viridis("tasa por\n100 mil\nhabitantes",
+                               trans = scales::pseudo_log_trans(sigma = 0.001)) +
+            theme(legend.key.size = unit(2, "cm")) +
+            theme(plot.title = element_text(size=30))
+        #ggsave("graphs/map_centro_covid.png", dpi = 100, width = 16, height = 11)
+        
+    })
+    
+    output$nlCovid <- renderPlot({
+        mxmunicipio_choropleth(muns, 
+                               num_colors = 1,
+                               title = paste("COVID Nuevo León",date_cap),
+                               legend = "tasa por\n100 mil\nhabitantes",
+                               zoom = subset(df_mxmunicipio, state_name %in% c("Nuevo León"))$region) +
+            scale_fill_viridis("tasa por\n100 mil\nhabitantes",
+                               trans = scales::pseudo_log_trans(sigma = 0.001)) +
+            theme(legend.key.size = unit(2, "cm")) +
+            theme(plot.title = element_text(size=30))
+        #ggsave("graphs/map_centro_covid.png", dpi = 100, width = 16, height = 11)
         
     })
 }
