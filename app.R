@@ -4,6 +4,72 @@ library(shiny)
 library(leaflet)
 library(mxmaps)
 
+## Auto-Install the following packages
+.packs <- c("tidyverse", "lubridate", "ggrepel", "viridis", "scales")
+.success <- suppressWarnings(sapply(.packs, require, character.only = TRUE))
+if (length(names(.success)[!.success])) {
+    install.packages(names(.success)[!.success])
+    sapply(names(.success)[!.success], require, character.only = TRUE)
+}
+if (!require(mxmaps))
+    devtools::install_github("diegovalle/mxmaps")
+library(mxmaps)
+options(stringsAsFactors = FALSE)
+
+temp <- tempfile()
+download.file("http://187.191.75.115/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip",temp)
+files <- unzip(temp, list = TRUE)
+df <- read_csv(unz(temp, arrange(files, Length)[1,]$Name))
+unlink(temp)
+
+pos <- filter(df, RESULTADO == 1)
+
+pos$region <- str_mxmunicipio(pos$ENTIDAD_RES, pos$MUNICIPIO_RES)
+muns <- pos %>%
+    group_by(region) %>%
+    tally()
+muns <- left_join(muns, df_mxmunicipio, by = "region")
+muns$value2 <-  muns$n / muns$pop * 10^5
+muns$value <- if_else(muns$value2 > 400, 400, muns$value2)
+
+muns$name <- paste(muns$state_name, muns$municipio_name)
+cities <- filter(muns, name %in% c("Coahuila Monclova",
+                                   "Baja California Sur Los Cabos",
+                                   "Ciudad de México Cuajimalpa de Morelos",
+                                   "Quintana Roo Benito Juárez",
+                                   "Sinaloa Culiacán",
+                                   "Tabasco Centro",
+                                   "Baja California Mexicali",
+                                   "Yucatán Mérida",
+                                   "Puebla Puebla",
+                                   "Sonora Sáric",
+                                   "Guerrero Acapulco de Juárez",
+                                   "Chihuahua Juárez",
+                                   "Coahuila Piedras Negras",
+                                   "Michoacán Lázaro Cárdenas",
+                                   "Oaxaca Santa María Huatulco",
+                                   "Colima Manzanillo",
+                                   "Jalisco Puerto Vallarta"))
+cities$municipio_name <- str_replace(cities$municipio_name, 
+                                     "Cuajimalpa de Morelos", 
+                                     "Cuajimalpa")
+cities$municipio_name <- str_replace(cities$municipio_name, 
+                                     "Santa María Huatulco", 
+                                     "Huatulco")
+cities$municipio_name <- str_replace(cities$municipio_name, 
+                                     "Benito Juárez", 
+                                     "Cancún")
+cities$municipio_name <- str_replace(cities$municipio_name, 
+                                     "Juárez", 
+                                     "Ciudad Juárez")
+cities$municipio_name <- str_replace(cities$municipio_name, 
+                                     "Acapulco de Juárez", 
+                                     "Acapulco")
+cities$municipio_name <- str_replace(cities$municipio_name, 
+                                     "Centro", 
+                                     "Villahermosa")
+cities$group <- NA
+
 data("df_mxstate")
 df_mxstate$value <- df_mxstate$pop
 
@@ -18,7 +84,8 @@ ui <- dashboardPage(
             menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
             menuItem("Widgets", tabName = "widgets", icon = icon("th")),
             menuItem("leaflet", tabName = "leaflet", icon = icon("th")),
-            menuItem("México", tabName = "México", icon = icon("th"))
+            menuItem("México Pop.", tabName = "MéxicoPop", icon = icon("th")),
+            menuItem("México Covid", tabName = "MéxicoCovid", icon = icon("th"))
         )
     ),
     ## Body content
@@ -73,9 +140,16 @@ ui <- dashboardPage(
             ),
             
             # fourth tab content
-            tabItem(tabName = "México",
+            tabItem(tabName = "MéxicoPop",
                     fluidPage(
                         plotOutput("mexicoPop")
+                    )
+            ),
+            
+            # fith tab content
+            tabItem(tabName = "MéxicoCovid",
+                    fluidPage(
+                        plotOutput("mexicoCovid")
                     )
             )
         )
@@ -152,6 +226,23 @@ server <- function(input, output) {
     
     output$mexicoPop <- renderPlot({
         mxstate_choropleth(df_mxstate, title = "Total population, by state") 
+    })
+    
+    output$mexicoCovid <- renderPlot({
+        mxmunicipio_choropleth(muns, 
+                               num_colors = 1,
+                               title = "Mapa de casos COVID-19 confirmados, por municipio de residencia (14 de abril del 2020)",
+                               legend = "tasa por\n100 mil\nhabitantes") +
+            scale_fill_viridis("tasa por\n100 mil\nhabitantes",
+                               trans = scales::pseudo_log_trans(sigma = 0.001)) + 
+            geom_label_repel(data = cities, aes(long, lat, label = municipio_name), 
+                             size = 3,
+                             force = .1, alpha = .8,
+                             box.padding = 3.3, label.padding = 0.18) +
+            theme(legend.key.size = unit(2, "cm")) +
+            theme(plot.title = element_text(size=32))
+        #ggsave("graphs/map_covid.png", dpi = 100, width = 19, height = 14)
+        
     })
 }
 
