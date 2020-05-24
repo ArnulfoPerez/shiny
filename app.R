@@ -106,11 +106,11 @@ r_colors <- rgb(t(col2rgb(colors()) / 255))
 names(r_colors) <- colors()
 
 ui <- dashboardPage(
-    dashboardHeader(title = "Mexico Info Board"),
+    dashboardHeader(title = "Mexico COVID-19"),
     ## Sidebar content
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
+            menuItem("Histogramas", tabName = "dashboard", icon = icon("dashboard")),
             menuItem("Widgets", tabName = "widgets", icon = icon("th")),
             menuItem("leaflet", tabName = "leaflet", icon = icon("th")),
             menuItem("México Pop.", tabName = "MéxicoPop", icon = icon("th")),
@@ -130,9 +130,7 @@ ui <- dashboardPage(
                         box(plotOutput("plot1", height = 250)),
                         
                         box(
-                            title = "Controls",
-                            sliderInput("slider", "Number of observations:", 1, 100, 50)
-                        )
+                            plotOutput("plot2", height = 250))
                     )
             ),
             
@@ -211,13 +209,15 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output) {
-    set.seed(122)
-    histdata <- rnorm(500)
     
     output$plot1 <- renderPlot({
-        data <- histdata[seq_len(input$slider)]
-        hist(data)
+        hist(df$EDAD,main = "Histograma por edad",xlab = "Edad",ylab = "Frecuencia")
     })
+    
+    output$plot2 <- renderPlot({
+        hist(df$SEXO,main = "Histograma por sexo",xlab = "Sexo",ylab = "Frecuencia")
+    })
+    
     output$ui <- renderUI({
         if (is.null(input$input_type))
             return()
