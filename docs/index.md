@@ -20,7 +20,7 @@ The application has a side panel with the following menu entries:
 - **Nuevo León Covid** A map that show Covid-19 case per county at the regional level, including the federal entity of Nuevo León.
 - **Covid by federal entity** A map that show Covid-19 case per county at the regional level, including the federal entity chosen by the user on the select text field.
 
-A brief explanation of the motivation and design logic of the application can be seen [here](https://arnulfoperez.github.io/shiny/pitch.html).
+A brief explanation of the motivation and design logic of the application can be seen [here](https://arnulfoperez.github.io/shiny/pitch.html) or in [RPubs](https://rpubs.com/ixi/619173).
 
 The code is based and inspired on the work of [Diego Valle](https://www.diegovalle.net/) that you can browse in his [github repository](https://github.com/diegovalle). Specifically the [R package mxmaps](https://github.com/diegovalle/mxmaps) and [mapa_covid.R](https://gist.github.com/diegovalle/9e72ecc855f720aa645e33494d6efcb8)
  
