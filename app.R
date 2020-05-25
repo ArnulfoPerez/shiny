@@ -1,19 +1,12 @@
 ## app.R ##
 library(shinydashboard)
-library(shiny)
-library(leaflet)
-library(mxmaps)
 
-## Auto-Install the following packages
-.packs <- c("tidyverse", "lubridate", "ggrepel", "viridis", "scales")
-.success <- suppressWarnings(sapply(.packs, require, character.only = TRUE))
-if (length(names(.success)[!.success])) {
-    install.packages(names(.success)[!.success])
-    sapply(names(.success)[!.success], require, character.only = TRUE)
-}
-if (!require(mxmaps))
-    devtools::install_github("diegovalle/mxmaps")
 library(mxmaps)
+library(tidyverse)
+library(lubridate)
+library(ggrepel)
+library(viridis)
+library(scales)
 options(stringsAsFactors = FALSE)
 
 temp <- tempfile()

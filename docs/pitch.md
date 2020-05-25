@@ -128,6 +128,6 @@ Conclusions
 
 - Source code [here](https://github.com/ArnulfoPerez/shiny).
 - Documentation [here](https://arnulfoperez.github.io/shiny/).
-- Live app [here]
+- Live app [here](https://zintegra.shinyapps.io/shiny/)
 - I implemented a [Shiny](https://shiny.rstudio.com/) app with interactive reactive components, georeferenced data displayed on maps, and used live open data updated daily.
 - I feel satisfied to have been able to develop a web app that gives up-to-date statistics of Covid-19 in México. 

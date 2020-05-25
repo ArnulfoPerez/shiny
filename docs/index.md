@@ -6,6 +6,8 @@ A Shiny App that gives statistics of Covid-19 in México.
 
 The source is available in a [github repository](https://github.com/ArnulfoPerez/shiny).
 
+The live app is [here](https://zintegra.shinyapps.io/shiny/)
+
 The application is a [shinydashboard](https://rstudio.github.io/shinydashboard/) application bulit on top of Shiny.
 
 The application has a side panel with the following menu entries:
@@ -17,6 +19,8 @@ The application has a side panel with the following menu entries:
 - **Center Covid** A map that show Covid-19 case per county at the regional level, including the federal entities of México City, Puebla, Morelos, México, Hidalgo, and Tlaxcala.
 - **Nuevo León Covid** A map that show Covid-19 case per county at the regional level, including the federal entity of Nuevo León.
 - **Covid by federal entity** A map that show Covid-19 case per county at the regional level, including the federal entity chosen by the user on the select text field.
+
+A brief explanation of the motivation and design logic of the application can be seen [here](https://arnulfoperez.github.io/shiny/pitch.html).
 
 The code is based and inspired on the work of [Diego Valle](https://www.diegovalle.net/) that you can browse in his [github repository](https://github.com/diegovalle). Specifically the [R package mxmaps](https://github.com/diegovalle/mxmaps) and [mapa_covid.R](https://gist.github.com/diegovalle/9e72ecc855f720aa645e33494d6efcb8)
  
