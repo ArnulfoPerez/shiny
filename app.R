@@ -112,7 +112,7 @@ ui <- dashboardPage(
         sidebarMenu(
             menuItem("Histogramas", tabName = "dashboard", icon = icon("dashboard")),
             menuItem("Read me", tabName = "widgets", icon = icon("th")),
-            menuItem("México Pop.", tabName = "MéxicoPop", icon = icon("th")),
+            menuItem("México Population", tabName = "MéxicoPop", icon = icon("th")),
             menuItem("México Covid", tabName = "MéxicoCovid", icon = icon("th")),
             menuItem("Center Covid", tabName = "CenterCovid", icon = icon("th")),
             menuItem("Nuevo León Covid", tabName = "NLCovid", icon = icon("th")),

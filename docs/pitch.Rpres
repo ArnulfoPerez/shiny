@@ -1,0 +1,67 @@
+Developing Data Products Coursera Course Project: 
+
+========================================================
+author: Arnulfo Perez
+date: May 24, 2020
+autosize: true
+
+Developing Data Products Coursera Course Project
+========================================================
+
+A Shiny App that gives statistics of Covid-19 in México. 
+
+A Demo with the following objectives:
+
+- Implement the full application cycle from idea to publication in a public server.
+- Use open data
+- Useful in the context of an actual need
+- Provide user interaction using reactive code
+- Use georeferenced data and maping utilities
+
+mxmaps package
+========================================================
+
+The app is based on the [mxmaps package](https://github.com/diegovalle/mxmaps). This package is based on choroplethr and can be used to create maps of Mexico at both the state and county levels. It is based on [Leaflet](https://leafletjs.com/) and open data from [INEGI](http://en.www.inegi.org.mx/servicios/datosabiertos.html)
+
+```{r, echo=FALSE,fig.center=TRUE}
+library(mxmaps)
+
+data("df_mxstate")
+df_mxstate$value <- df_mxstate$pop
+mxstate_choropleth(df_mxstate,
+                    title = "Total population, by state") 
+```
+
+Up-to-date data on the spread of Covid-19
+========================================================
+
+The application uses [data published daily by the mexican government](https://www.gob.mx/salud/documentos/datos-abiertos-152127)
+
+```{r, echo = FALSE, cache= TRUE}
+library(readr)
+library(dplyr)
+temp <- tempfile()
+download.file("http://187.191.75.115/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip",temp)
+files <- unzip(temp, list = TRUE)
+df <- read_csv(unz(temp, arrange(files, Length)[1,]$Name))
+unlink(temp)
+str(df)
+```
+
+shinydashboard
+========================================================
+
+[shinydashboard](https://rstudio.github.io/shinydashboard/) makes it easy to use Shiny to create dashboards.
+
+There are several options to add dashboard functionality to Shiny, like [flexdashboard](https://rmarkdown.rstudio.com/flexdashboard/shiny.html) or [htmlwidgets](http://www.htmlwidgets.org/). 
+
+I decided to use [shinydashboard](https://rstudio.github.io/shinydashboard/) because it was well documented and easy to use by a beginner like me.
+
+Conclusions
+========================================================
+
+- Source code [here](https://github.com/ArnulfoPerez/shiny).
+- Documentation [here](https://arnulfoperez.github.io/shiny/).
+- Live app [here]
+- I implemented a [Shiny](https://shiny.rstudio.com/) app with interactive reactive components, georeferenced data displayed on maps, and used live open data updated daily.
+- I feel satisfied to have been able to develop a web app that gives up-to-date statistics of Covid-19 in México. 
